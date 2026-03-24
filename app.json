@@ -44,6 +44,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "tmdbApiKey": process.env.EXPO_PUBLIC_TMDB_API_KEY
     }
   }
 }

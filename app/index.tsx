@@ -23,7 +23,8 @@ export default function Login() {
       // TODO: Implement actual sign-in logic
       setLoading(true);
       await signIn(email, password);
-      router.replace("/home");
+      // router.replace("/home");
+      router.replace("/popularMovies");
     } catch (error: any) {
       Alert.alert("Sign in failed", error.message || "Something went wrong.");
       console.error("Error signing in:", error);
