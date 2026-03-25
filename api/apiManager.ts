@@ -4,6 +4,7 @@ class ApiManager {
     private static instance: ApiManager;
     private baseUrl: string;
     private options;
+    private apiKey = process.env.EXPO_PUBLIC_TMDB_API_KEY || "";
 
     private constructor() {
         this.baseUrl = 'https://api.themoviedb.org/3/';
@@ -11,7 +12,7 @@ class ApiManager {
             method: 'GET',
             headers: {
                 accept: 'application/json',
-                Authorization: `Bearer ${process.env.EXPO_PUBLIC_TMDB_API_KEY}`
+                Authorization: `Bearer ${this.apiKey}`
             }
         };
     }

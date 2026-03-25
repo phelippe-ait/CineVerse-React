@@ -1,8 +1,13 @@
 import { Movie } from '@/Models/APIModels';
-import { View, Text, Image, StyleSheet, useWindowDimensions } from 'react-native';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
+type Props = {
+    item: Movie;
+    onPress?: () => void;
+};
 
-export default function ListItem({ item }: { item: Movie }) {
+export default function ListItem({ item, onPress }: Props) {
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
 
@@ -11,7 +16,11 @@ export default function ListItem({ item }: { item: Movie }) {
         : null;
 
     return (
-        <View style={[styles.container, { width: isLandscape ? '22%' : '45%' } ]}>
+        <Pressable onPress={onPress} style={({ pressed }) => [
+            styles.pressable,
+            { width: isLandscape ? '22%' : '45%' },
+            pressed && styles.pressed // Add visual feedback on press
+        ]}>
             <View style={styles.posterContainer}>
                 {posterUrl ? (
                     <Image
@@ -20,20 +29,25 @@ export default function ListItem({ item }: { item: Movie }) {
                         resizeMode="contain" // Ensure the image fits within the container without distortion
                     />
                 ) : (
-                    <View style={styles.posterPlaceholder} />
+                    <View style={styles.posterPlaceholder}>
+                        <MaterialIcons name="movie" size={48} color="#666" />
+                    </View>
                 )}
             </View>
             <Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'
             >{item.title}</Text>
-        </View>
+        </Pressable>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginVertical: 10,
+    pressable: {
+        flexDirection: "column",
+        alignItems: "center",
+        marginVertical: 10
+    },
+    pressed: {
+        opacity: 0.75
     },
     posterContainer: {
         width: '100%',
@@ -50,9 +64,8 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         backgroundColor: "#ddd",
-        // backgroundImage: "url(https://via.placeholder.com/120x180?text=No+Image)", // Placeholder image for missing posters
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
+        justifyContent: "center",
+        alignItems: "center",
     },
     title: {
         marginTop: 8,

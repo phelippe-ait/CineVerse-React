@@ -1,13 +1,12 @@
-import { Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { logOut } from "../auth/AuthManager";
-import { Button } from "../components/Button";
-import { colours } from "../styles/colours";
+import { logOut } from "../../auth/AuthManager";
+import { Button } from "../../components/Button";
+import { colours } from "../../styles/colours";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+export default function Home() {
 
   // get the router object for navigation
   const router = useRouter();

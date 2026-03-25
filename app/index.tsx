@@ -24,7 +24,7 @@ export default function Login() {
       setLoading(true);
       await signIn(email, password);
       // router.replace("/home");
-      router.replace("/popularMovies");
+      router.replace("/tabs/discover");
     } catch (error: any) {
       Alert.alert("Sign in failed", error.message || "Something went wrong.");
       console.error("Error signing in:", error);

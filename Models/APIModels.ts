@@ -8,15 +8,15 @@ interface Response {
     title: string;
     overview: string;
     releaseDate: string;
-    posterPath: string;
+    posterPath: string | null;
 }
 
 export function mapJsonToMovie(json: any): Movie {
     return {
         id: json.id,
-        title: json.title ?? "",
-        overview: json.overview ?? "",
-        releaseDate: json.release_date ?? "",
-        posterPath: json.poster_path ?? ""
+        title: json.title ?? "Unknown Title",
+        overview: json.overview ?? "No overview available.",
+        releaseDate: json.release_date ?? "No release date available.",
+        posterPath: json.poster_path ?? null
     };
 }
