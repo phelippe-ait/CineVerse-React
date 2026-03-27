@@ -26,14 +26,14 @@ class ApiManager {
     }
 
     // Method to fetch popular movies from TMDB API
-    async getPopularMovies(): Promise<Movie[]> {
+    async getPopularMovies(page: number): Promise<[Movie[], number]> {
         try {
-            const response = await fetch('https://api.themoviedb.org/3/discover/movie', this.options);
+            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?page=${page}`, this.options);
             if (!response.ok) {
                 throw new Error("TMDB request failed: " + response.status);
             }
             const data = await response.json();
-            return data.results.map(mapJsonToMovie);
+            return [data.results.map(mapJsonToMovie), data.total_pages];
         } catch (error) {
             console.error("Error fetching popular movies:", error);
             throw error;

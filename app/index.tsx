@@ -33,11 +33,6 @@ export default function Login() {
     }
   };
 
-  const handleSignUp = () => {
-    // navigate to sign-up screen
-    router.push("/signup");
-  };
-
   const handleForgotPassword = () => {
     // navigate to reset flow
     console.log("forgot password");

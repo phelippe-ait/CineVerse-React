@@ -18,7 +18,7 @@ export default function ListItem({ item, onPress }: Props) {
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [
             styles.pressable,
-            { width: isLandscape ? '22%' : '45%' },
+            { width: isLandscape ? '22%' : '45%' }, 
             pressed && styles.pressed // Add visual feedback on press
         ]}>
             <View style={styles.posterContainer}>
