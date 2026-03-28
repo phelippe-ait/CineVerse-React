@@ -1,15 +1,13 @@
 import { Tabs } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        sceneStyle: {
-          backgroundColor: "#060911",
-        },
         tabBarStyle: {
           backgroundColor: "#030508",
           borderTopWidth: 0,
@@ -32,6 +30,16 @@ export default function TabsLayout() {
           title: "Discover",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="movie" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="watch-later"
+        options={{
+          title: "Watch Later",
+          tabBarIcon: ({ color }) => (
+            <Feather name="bookmark" size={22} color={color} />
           ),
         }}
       />
