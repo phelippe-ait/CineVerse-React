@@ -1,6 +1,6 @@
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
 import { signIn } from "../auth/AuthManager";
 import { Button } from "../components/Button";
 import { colours } from "../styles/colours";
@@ -40,10 +40,22 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
+
+    <View style={styles.logoWrapper}>
+  <Image
+    source={require("../assets/images/cinelogo.png")}
+    style={styles.logo}
+    resizeMode="contain"
+    fadeDuration={0}
+  />
+</View>
+
       <View style={styles.loginContainer}>
         <View style={styles.headingContainer}>
           <Text style={styles.heading}>Welcome back</Text>
         </View>
+
+        
 
         <TextInput
           style={styles.input}
@@ -84,12 +96,28 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 40,
+    padding: 20,
+    paddingTop: 10,
     paddingHorizontal: 20,
     backgroundColor: "#0a101d",
   },
+
+  logoWrapper: {
+  width: 500,
+  height: 500,
+  alignSelf: "center",
+  marginBottom: -100,
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+logo: {
+  width: 500,
+  height: 500,
+},
+
   loginContainer: {
     width: "90%",
     maxWidth: 400,
