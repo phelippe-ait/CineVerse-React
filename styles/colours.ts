@@ -1,6 +1,6 @@
 export const colours = {
   primary: "#080C17",
-  secondary: "#383434",
+  secondary: "#38384daf",
   terciary: "#919191",
   accent: "#3B82F6",
   textPrimary: "#ffffffc1",
@@ -9,7 +9,7 @@ export const colours = {
   buttonText: "#ffffffc1",
   inputBackground: "#484444",
   inputBorder: "#ccc",
-  navBarBackground: "#383434",
+  navBarBackground: "#0a101d",
   navBarText: "#fff",
 } as const;
 
