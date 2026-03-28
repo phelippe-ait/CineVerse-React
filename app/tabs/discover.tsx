@@ -2,10 +2,15 @@ import apiManager from "@/api/apiManager";
 import ListItem from "@/components/ListItem";
 import { Movie } from "@/Models/APIModels";
 import { Link } from "expo-router";
-import React from "react";
-import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
+import { onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { auth } from "../../auth/firebaseConfig";
+
+
+
+
 
 export default function Discover() {
     const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
@@ -15,7 +20,13 @@ export default function Discover() {
     const [isLoading, setIsLoading] = useState(false);
     const isLandscape = width > height;
     const loadingRef = useRef(false);
+    const [userName, setUserName] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    
 
+    const filteredMovies = popularMovies.filter((movie) =>
+        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const loadMovies = () => {
         if (loadingRef.current) { return; } // Prevent multiple simultaneous loads
@@ -50,6 +61,27 @@ export default function Discover() {
             });
     };
 
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user?.displayName) {
+                setUserName(user.displayName);
+            } else {
+                setUserName("User");
+            }
+        });
+
+        return unsubscribe;
+    }, []);
+
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+
+        if (hour < 12) return "Good morning";
+        if (hour < 18) return "Good afternoon";
+        return "Good evening";
+    };
+
     // Load the first page of movies when the component mounts
     useEffect(() => {
         loadMovies();
@@ -65,11 +97,94 @@ export default function Discover() {
         );
     }
 
+    const noResults = filteredMovies.length === 0;
+
     return (
         <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
             <FlatList
+
+                ListHeaderComponent={
+                    <View style={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 20 }}>
+
+                        {/* HEADER */}
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                marginBottom: 20,
+                            }}
+                        >
+                            <View>
+                                <Text style={{ color: "#94A3B8", fontSize: 14 }}>
+                                    {getGreeting()},
+                                </Text>
+
+                                <Text style={{ color: "#E2E8F0", fontSize: 26, fontWeight: "700" }}>
+                                    {userName || "User"} 👋
+                                </Text>
+                            </View>
+
+                            <Link href="/tabs/account" asChild>
+                                <TouchableOpacity
+                                    style={{
+                                        width: 48,
+                                        height: 48,
+                                        borderRadius: 24,
+                                        backgroundColor: "#3B82F6",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                    activeOpacity={0.7}
+                                >
+                                    <Text style={{ color: "white", fontWeight: "600", fontSize: 20 }}>
+                                        {(userName?.charAt(0) || "U").toUpperCase()}
+                                    </Text>
+                                </TouchableOpacity>
+                            </Link>
+                        </View>
+
+                        {/* SEARCH BAR */}
+                        <View
+                            style={{
+                                backgroundColor: "#1E293B",
+                                borderRadius: 14,
+                                paddingHorizontal: 16,
+                                paddingVertical: 4,
+                            }}
+                        >
+                            <TextInput
+                                placeholder="Search movie title..."
+                                placeholderTextColor="#94A3B8"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                style={{
+                                    color: "#E2E8F0",
+                                    fontSize: 14,
+                                    paddingVertical: 10,
+                                }}
+                            />
+                        </View>
+
+                    </View>
+                }
+                ListEmptyComponent={
+                    noResults ? (
+                        <Text
+                            style={{
+                                color: "#94A3B8",
+                                textAlign: "center",
+                                marginTop: 20,
+                                fontSize: 14,
+                            }}
+                        >
+                            No movies found
+                        </Text>
+                    ) : null
+                }
+
                 key={isLandscape ? "cols-4" : "cols-2"}
-                data={popularMovies}
+                data={filteredMovies}
                 keyExtractor={(movie) => movie.id.toString()}
                 renderItem={({ item }) => (
                     <Link
@@ -81,6 +196,8 @@ export default function Discover() {
                     >
                         <ListItem item={item} />
                     </Link>
+
+
                 )}
                 numColumns={isLandscape ? 4 : 2}
                 columnWrapperStyle={{ justifyContent: "space-between" }}

@@ -5,6 +5,8 @@ import { Button } from "../components/Button";
 import { colours, Colours } from "../styles/colours";
 import { signUp } from "../auth/AuthManager";
 
+
+
 export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
