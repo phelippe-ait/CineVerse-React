@@ -34,7 +34,7 @@ export default function ForgotPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2D2929",
+    backgroundColor: "#0a101d",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     width: "80%",
     maxWidth: 400,
     padding: 20,
-    backgroundColor: "#3B3838",
+    backgroundColor: "#38384daf",
     borderRadius: 8,
   },
   headingContainer: {
