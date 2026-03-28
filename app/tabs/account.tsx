@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { logOut } from "../../auth/AuthManager";
 import { Button } from "../../components/Button";
 import { colours } from "../../styles/colours";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Account() {
 

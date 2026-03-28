@@ -73,5 +73,6 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         width: "100%",
+        color: '#ddd'
     },
 });

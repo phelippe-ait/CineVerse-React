@@ -2,6 +2,7 @@ import apiManager from "@/api/apiManager";
 import ListItem from "@/components/ListItem";
 import { Movie } from "@/Models/APIModels";
 import { Link } from "expo-router";
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -97,5 +98,6 @@ export default function Discover() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#0a101d'
     },
 });

@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 40,
     paddingHorizontal: 20,
-    backgroundColor: "#2D2929",
+    backgroundColor: "#0a101d",
   },
   signupContainer: {
     maxWidth: 250,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     color: "#ffffffc1",
     padding: 12,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#979494",
     borderRadius: 6,
     marginBottom: 15,
     backgroundColor: "#484444",
