@@ -1,6 +1,7 @@
+import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { signIn } from "../auth/AuthManager";
 import { Button } from "../components/Button";
 import { colours } from "../styles/colours";
@@ -8,9 +9,10 @@ import { colours } from "../styles/colours";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  // get the router object for navigation
   const router = useRouter();
 
   const handleSignIn = async () => {
@@ -20,10 +22,8 @@ export default function Login() {
     }
 
     try {
-      // TODO: Implement actual sign-in logic
       setLoading(true);
       await signIn(email, password);
-      // router.replace("/home");
       router.replace("/tabs/discover");
     } catch (error: any) {
       Alert.alert("Sign in failed", error.message || "Something went wrong.");
@@ -33,49 +33,69 @@ export default function Login() {
     }
   };
 
-  const handleForgotPassword = () => {
-    // navigate to reset flow
-    console.log("forgot password");
-  };
-
   return (
     <View style={styles.container}>
-
-    <View style={styles.logoWrapper}>
-  <Image
-    source={require("../assets/images/cinelogo.png")}
-    style={styles.logo}
-    resizeMode="contain"
-    fadeDuration={0}
-  />
-</View>
+      <View style={styles.logoWrapper}>
+        <Image
+          source={require("../assets/images/cinelogo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+          fadeDuration={0}
+        />
+      </View>
 
       <View style={styles.loginContainer}>
-        <View style={styles.headingContainer}>
-          <Text style={styles.heading}>Welcome back</Text>
-        </View>
-
-        
+        <Text style={styles.heading}>Welcome back</Text>
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            focusedField === "email" && styles.inputFocused,
+          ]}
           placeholder="you@example.com"
+          placeholderTextColor="#AAAAAA"
           value={email}
           onChangeText={setEmail}
+          onFocus={() => setFocusedField("email")}
+          onBlur={() => setFocusedField(null)}
           autoCapitalize="none"
+          keyboardType="email-address"
+          editable={!loading}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.passwordWrapper,
+            focusedField === "password" && styles.passwordWrapperFocused,
+          ]}
+        >
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="password"
+            placeholderTextColor="#AAAAAA"
+            value={password}
+            onChangeText={setPassword}
+            onFocus={() => setFocusedField("password")}
+            onBlur={() => setFocusedField(null)}
+            secureTextEntry={!showPassword}
+            editable={!loading}
+          />
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeIcon}
+          >
+            <Feather
+              name={showPassword ? "eye" : "eye-off"}
+              size={20}
+              color="#919191"
+            />
+          </Pressable>
+        </View>
 
         <Button
           text={loading ? "Signing In..." : "Sign In"}
           onPress={handleSignIn}
+          disabled={loading}
         />
 
         <Link style={styles.forgotText} href="/forgotPassword">
@@ -105,18 +125,17 @@ const styles = StyleSheet.create({
   },
 
   logoWrapper: {
-  width: 500,
-  height: 500,
-  alignSelf: "center",
-  marginBottom: -100,
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-logo: {
-  width: 500,
-  height: 500,
-},
+    width: 500,
+    height: 500,
+    alignSelf: "center",
+    marginBottom: -100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: 500,
+    height: 500,
+  },
 
   loginContainer: {
     width: "90%",
@@ -134,12 +153,11 @@ logo: {
     elevation: 5,
   },
   heading: {
-    fontSize: 28,
-    fontWeight: "500",
+    fontSize: 32,
+    fontWeight: "700",
     marginBottom: 30,
-    color: "rgb(255, 255, 255)",
-  },
-  headingContainer: {
+    color: "#FFFFFF",
+    letterSpacing: 0.5,
     alignSelf: "flex-start",
   },
   input: {
@@ -149,8 +167,32 @@ logo: {
     borderColor: "#979494",
     borderRadius: 6,
     marginBottom: 15,
-    color: colours.textPrimary,
+    color: "#FFFFFF",
     backgroundColor: colours.inputBackground,
+  },
+  inputFocused: {
+    borderColor: "#3B82F6",
+  },
+  passwordWrapper: {
+    width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#979494",
+    borderRadius: 6,
+    marginBottom: 15,
+    backgroundColor: colours.inputBackground,
+  },
+  passwordWrapperFocused: {
+    borderColor: "#3B82F6",
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    color: "#FFFFFF",
+  },
+  eyeIcon: {
+    paddingRight: 12,
   },
   forgotText: {
     color: colours.textSecondary,

@@ -14,21 +14,24 @@ import { auth } from "../../auth/firebaseConfig";
 
 export default function Discover() {
     const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+    const [searchedMovies, setSearchedMovies] = useState<Movie[]>([]);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchPage, setSearchPage] = useState(1);
+    const [searchTotalPages, setSearchTotalPages] = useState(1);
     const { width, height } = useWindowDimensions();
     const [isLoading, setIsLoading] = useState(false);
     const isLandscape = width > height;
     const loadingRef = useRef(false);
+    const searchLoadingRef = useRef(false);
     const [userName, setUserName] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    
 
-    const filteredMovies = popularMovies.filter((movie) =>
-        movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const trimmedSearchQuery = searchQuery.trim();
+    const activeMovies = trimmedSearchQuery ? searchedMovies : popularMovies;
 
     const loadMovies = () => {
+        if (trimmedSearchQuery) { return; }
         if (loadingRef.current) { return; } // Prevent multiple simultaneous loads
         if (page > totalPages) { return; }
         loadingRef.current = true;
@@ -61,6 +64,41 @@ export default function Discover() {
             });
     };
 
+    const loadSearchMovies = (query: string, nextPage: number) => {
+        if (!query) { return; }
+        if (searchLoadingRef.current) { return; }
+        if (nextPage > searchTotalPages) { return; }
+
+        searchLoadingRef.current = true;
+        setIsLoading(true);
+
+        apiManager
+            .searchMovies(query, nextPage)
+            .then(([newMovies, totalPagesResponse]) => {
+                setSearchedMovies((prevMovies) => {
+                    const existingMovieIds = new Set(prevMovies.map((movie) => movie.id));
+                    const newMoviesFiltered = newMovies.filter(
+                        (movie) => !existingMovieIds.has(movie.id)
+                    );
+
+                    return nextPage === 1 ? newMoviesFiltered : [...prevMovies, ...newMoviesFiltered];
+                });
+
+                if (totalPagesResponse !== searchTotalPages) {
+                    setSearchTotalPages(totalPagesResponse);
+                }
+
+                setSearchPage(nextPage + 1);
+            })
+            .catch((error) => {
+                console.error("Failed to fetch searched movies:", error);
+            })
+            .finally(() => {
+                searchLoadingRef.current = false;
+                setIsLoading(false);
+            });
+    };
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -88,6 +126,24 @@ export default function Discover() {
 
     }, []);
 
+    useEffect(() => {
+        if (!trimmedSearchQuery) {
+            setSearchedMovies([]);
+            setSearchPage(1);
+            setSearchTotalPages(1);
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            setSearchedMovies([]);
+            setSearchPage(1);
+            setSearchTotalPages(1);
+            loadSearchMovies(trimmedSearchQuery, 1);
+        }, 350);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery]);
+
     const renderFooter = () => {
         if (!isLoading) return null;
         return (
@@ -97,7 +153,7 @@ export default function Discover() {
         );
     }
 
-    const noResults = filteredMovies.length === 0;
+    const noResults = !isLoading && activeMovies.length === 0;
 
     return (
         <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -184,7 +240,7 @@ export default function Discover() {
                 }
 
                 key={isLandscape ? "cols-4" : "cols-2"}
-                data={filteredMovies}
+                data={activeMovies}
                 keyExtractor={(movie) => movie.id.toString()}
                 renderItem={({ item }) => (
                     <Link
@@ -203,7 +259,14 @@ export default function Discover() {
                 columnWrapperStyle={{ justifyContent: "space-between" }}
                 contentContainerStyle={{ paddingHorizontal: 8 }}
                 // Trigger loading more movies when the user scrolls near the end of the list
-                onEndReached={loadMovies}
+                onEndReached={() => {
+                    if (trimmedSearchQuery) {
+                        loadSearchMovies(trimmedSearchQuery, searchPage);
+                        return;
+                    }
+
+                    loadMovies();
+                }}
                 onEndReachedThreshold={0.1}
                 // Add a footer component to show a loading indicator when fetching more movies
                 ListFooterComponent={renderFooter}

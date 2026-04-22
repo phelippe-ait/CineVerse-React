@@ -1,9 +1,10 @@
+import Feather from "@expo/vector-icons/Feather";
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
-import { Button } from "../components/Button";
-import { colours, Colours } from "../styles/colours";
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { signUp } from "../auth/AuthManager";
+import { Button } from "../components/Button";
+import { colours } from "../styles/colours";
 
 
 
@@ -11,7 +12,9 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const router = useRouter();
    
@@ -39,37 +42,72 @@ export default function SignUp() {
   return (
     <View style={styles.container}>
       <View style={styles.loginContainer}>
-        <View style={styles.headingContainer}>
-          <Text style={styles.heading}>Create an Account</Text>
-        </View>
+        <Text style={styles.heading}>Create Account</Text>
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            focusedField === "name" && styles.inputFocused,
+          ]}
           placeholder="Name"
+          placeholderTextColor="#AAAAAA"
           value={name}
           onChangeText={setName}
-          autoCapitalize="none"
+          onFocus={() => setFocusedField("name")}
+          onBlur={() => setFocusedField(null)}
+          autoCapitalize="words"
+          editable={!loading}
         />
 
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            focusedField === "email" && styles.inputFocused,
+          ]}
           placeholder="Email"
+          placeholderTextColor="#AAAAAA"
           value={email}
           onChangeText={setEmail}
+          onFocus={() => setFocusedField("email")}
+          onBlur={() => setFocusedField(null)}
           autoCapitalize="none"
+          keyboardType="email-address"
+          editable={!loading}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.passwordWrapper,
+            focusedField === "password" && styles.passwordWrapperFocused,
+          ]}
+        >
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            placeholderTextColor="#AAAAAA"
+            value={password}
+            onChangeText={setPassword}
+            onFocus={() => setFocusedField("password")}
+            onBlur={() => setFocusedField(null)}
+            secureTextEntry={!showPassword}
+            editable={!loading}
+          />
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeIcon}
+          >
+            <Feather
+              name={showPassword ? "eye" : "eye-off"}
+              size={20}
+              color="#919191"
+            />
+          </Pressable>
+        </View>
 
         <Button
           text={loading ? "Signing Up..." : "Sign Up"}
           onPress={handleSignUp}
+          disabled={loading}
         />
       </View>
 
@@ -104,15 +142,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#919191",
   },
+  heading: {
+    fontSize: 32,
+    fontWeight: "700",
+    marginBottom: 30,
+    color: "#FFFFFF",
+    letterSpacing: 0.5,
+    alignSelf: "flex-start",
+  },
   input: {
     width: "90%",
-    color: "#ffffffc1",
+    color: "#FFFFFF",
     padding: 12,
     borderWidth: 1,
     borderColor: "#979494",
     borderRadius: 6,
     marginBottom: 15,
     backgroundColor: "#484444",
+  },
+  inputFocused: {
+    borderColor: "#3B82F6",
+  },
+  passwordWrapper: {
+    width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#979494",
+    borderRadius: 6,
+    marginBottom: 15,
+    backgroundColor: "#484444",
+  },
+  passwordWrapperFocused: {
+    borderColor: "#3B82F6",
+  },
+  passwordInput: {
+    flex: 1,
+    padding: 12,
+    color: "#FFFFFF",
+  },
+  eyeIcon: {
+    paddingRight: 12,
   },
   loginContainer: {
     width: "90%",
@@ -128,15 +198,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
-  },
-  headingContainer: {
-    alignSelf: "flex-start",
-  },
-  heading: {
-    fontSize: 28,
-    fontWeight: "500",
-    marginBottom: 30,
-    color: "rgb(255, 255, 255)",
   },
   signupButton: {
     color: colours.accent,

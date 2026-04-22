@@ -1,15 +1,21 @@
 import { Pressable, StyleProp, StyleSheet, Text, ViewStyle } from "react-native";
-import { colours, Colours } from "../styles/colours";
+import { colours } from "../styles/colours";
+import React from "react";
 
 interface ButtonProps {
     text: string;
     style?: StyleProp<ViewStyle>;
     onPress?: () => void;
+    disabled?: boolean;
 }
 
-export function Button({ text, style, onPress }: ButtonProps) {
+export function Button({ text, style, onPress, disabled }: ButtonProps) {
     return (
-        <Pressable style={[styles.button, style]} onPress={onPress}>
+        <Pressable
+            style={[styles.button, style, disabled && styles.disabled]}
+            onPress={onPress}
+            disabled={disabled}
+        >
             <Text style={styles.buttonText}>{text}</Text>
         </Pressable>
     );
@@ -29,5 +35,8 @@ const styles = StyleSheet.create({
         color: colours.buttonText,
         fontSize: 16,
         fontWeight: "bold",
+    },
+    disabled: {
+        opacity: 0.5,
     },
 });

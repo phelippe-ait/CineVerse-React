@@ -1,14 +1,21 @@
+import ListItem from "@/components/ListItem";
+import Feather from "@expo/vector-icons/Feather";
+import { useFocusEffect } from "@react-navigation/native";
 import { Link } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
-import ListItem from "@/components/ListItem";
 import { getWatchLaterMovies } from "../../auth/WatchLaterManager";
-import Feather from "@expo/vector-icons/Feather";
 
 export default function WatchLater() {
     const [movies, setMovies] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredMovies = movies.filter((movie) =>
+        String(movie.title || "")
+            .toLowerCase()
+            .includes(searchQuery.trim().toLowerCase())
+    );
 
     const loadWatchLater = async () => {
         try {
@@ -31,40 +38,62 @@ export default function WatchLater() {
             edges={["top", "left", "right"]}
         >
             <FlatList
-                data={movies}
+                data={filteredMovies}
                 keyExtractor={(item) => item.id.toString()}
                 ListHeaderComponent={
                     <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            marginBottom: 16,
-                        }}
+                        style={{ marginBottom: 16 }}
                     >
                         <View
                             style={{
-                                backgroundColor: "rgba(59,130,246,0.2)",
-                                padding: 6,
-                                borderRadius: 8,
+                                flexDirection: "row",
+                                alignItems: "center",
+                                marginBottom: 14,
                             }}
                         >
-                            <Feather name="bookmark" size={38} color="#3B82F6" />
+                            <View
+                                style={{
+                                    backgroundColor: "rgba(59,130,246,0.2)",
+                                    padding: 6,
+                                    borderRadius: 8,
+                                }}
+                            >
+                                <Feather name="bookmark" size={38} color="#3B82F6" />
+                            </View>
+
+                            <Text
+                                style={{
+                                    color: "#E2E8F0",
+                                    fontSize: 32,
+                                    fontWeight: "700",
+                                    marginLeft: 10,
+                                }}
+                            >
+                                Watch Later
+                            </Text>
                         </View>
 
-                        <Text
+                        <View
                             style={{
-                                color: "#E2E8F0",
-                                fontSize: 32,
-                                fontWeight: "700",
-                                marginLeft: 10,
+                                backgroundColor: "#1E293B",
+                                borderRadius: 14,
+                                paddingHorizontal: 16,
+                                paddingVertical: 4,
                             }}
                         >
-                            Watch Later
-                        </Text>
-
-                        
+                            <TextInput
+                                placeholder="Search saved movies..."
+                                placeholderTextColor="#94A3B8"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                style={{
+                                    color: "#E2E8F0",
+                                    fontSize: 14,
+                                    paddingVertical: 10,
+                                }}
+                            />
+                        </View>
                     </View>
-                    
                 }
                 renderItem={({ item }) => (
                     <Link
@@ -76,6 +105,7 @@ export default function WatchLater() {
                                 posterPath: item.posterPath || undefined,
                                 overview: item.overview || "",
                                 releaseDate: item.releaseDate || "",
+                                voteAverage: item.voteAverage || "0.0",
                             },
                         }}
                         asChild
@@ -95,7 +125,7 @@ export default function WatchLater() {
                             fontSize: 14,
                         }}
                     >
-                        No saved movies yet
+                        {searchQuery.trim() ? "No matching movies found" : "No saved movies yet"}
                     </Text>
                 }
             />

@@ -1,11 +1,11 @@
+import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { auth } from "../../auth/firebaseConfig";
-import { logOut } from "../../auth/AuthManager";
-import { Button } from "../../components/Button";
-import { colours } from "../../styles/colours";
+import { logOut } from "../../../auth/AuthManager";
+import { auth } from "../../../auth/firebaseConfig";
+import { Button } from "../../../components/Button";
+import { colours } from "../../../styles/colours";
 
 export default function Account() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function Account() {
         <Text style={styles.cardTitle}>Account</Text>
 
         <View style={styles.infoRow}>
-          <Feather name="mail" size={18} color="#3B82F6" />
+          <Feather name="mail" size={18} color="#893eb1" />
           <Text style={styles.infoText}>{userEmail || "No email available"}</Text>
         </View>
 
@@ -52,7 +52,18 @@ export default function Account() {
           <Feather name="bookmark" size={18} color="#3B82F6" />
           <Text style={styles.infoText}>Watch Later enabled</Text>
         </View>
+
+        <View style={styles.infoRow}>
+          <Feather name="check-circle" size={18} color="#22C55E" />
+          <Text style={styles.infoText}>Track watched movies</Text>
+        </View>
       </View>
+
+      <Button
+        text="My Watched Movies"
+        style={styles.watchedButton}
+        onPress={() => router.push("/tabs/account/watched")}
+      />
 
       <Button
         text="Log out"
@@ -139,6 +150,14 @@ const styles = StyleSheet.create({
 
   logoutButton: {
     backgroundColor: "#1E293B",
-    alignItems: "center"
+    alignItems: "center",
+  },
+
+  watchedButton: {
+    backgroundColor: "#0F172A",
+    borderWidth: 1,
+    borderColor: "#22C55E",
+    marginBottom: 12,
+    alignItems: "center",
   },
 });

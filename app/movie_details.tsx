@@ -7,7 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
 	addToWatchLater,
 	isMovieInWatchLater,
-	removeFromWatchLater
+	isMovieWatched,
+	removeFromWatchLater,
+	setMovieWatchedStatus,
 } from "../auth/WatchLaterManager";
 
 
@@ -22,6 +24,7 @@ export default function MovieDetails() {
 		: null;
 
 	const [saved, setSaved] = useState(false);
+	const [watched, setWatched] = useState(false);
 
 	const handleWatchLater = async () => {
 		if (!params.movieId) return;
@@ -40,6 +43,7 @@ export default function MovieDetails() {
 					posterPath: params.posterPath ? String(params.posterPath) : "",
 					overview: params.overview ? String(params.overview) : "",
 					releaseDate: params.releaseDate ? String(params.releaseDate) : "",
+					voteAverage: params.voteAverage ? String(params.voteAverage) : "0.0",
 				});
 			}
 		} catch (error) {
@@ -50,19 +54,49 @@ export default function MovieDetails() {
 		}
 	};
 
+	const handleWatched = async () => {
+		if (!params.movieId) return;
+
+		const movieId = Number(params.movieId);
+		const nextWatchedValue = !watched;
+
+		try {
+			setWatched(nextWatchedValue);
+			await setMovieWatchedStatus(
+				{
+					movieId,
+					title: params.title ? String(params.title) : "",
+					posterPath: params.posterPath ? String(params.posterPath) : "",
+					overview: params.overview ? String(params.overview) : "",
+					releaseDate: params.releaseDate ? String(params.releaseDate) : "",
+					voteAverage: params.voteAverage ? String(params.voteAverage) : "0.0",
+				},
+				nextWatchedValue,
+			);
+		} catch (error) {
+			console.error("Watched status error:", error);
+			setWatched((prev) => !prev);
+		}
+	};
+
 	useEffect(() => {
-		const checkIfSaved = async () => {
+		const loadMovieStatuses = async () => {
 			try {
 				if (!params.movieId) return;
+				const movieId = Number(params.movieId);
 
-				const exists = await isMovieInWatchLater(Number(params.movieId));
+				const [exists, watchedStatus] = await Promise.all([
+					isMovieInWatchLater(movieId),
+					isMovieWatched(movieId),
+				]);
 				setSaved(exists);
+				setWatched(watchedStatus);
 			} catch (error) {
-				console.error("Check watch later error:", error);
+				console.error("Check movie status error:", error);
 			}
 		};
 
-		checkIfSaved();
+		loadMovieStatuses();
 	}, [params.movieId]);
 
 
@@ -96,6 +130,26 @@ export default function MovieDetails() {
 								name="bookmark"
 								size={20}
 								color={saved ? "#3B82F6" : "#94A3B8"}
+							/>
+						</TouchableOpacity>
+
+						{/* watched button */}
+						<TouchableOpacity
+							onPress={handleWatched}
+							activeOpacity={0.7}
+							style={{
+								position: "absolute",
+								top: 56,
+								right: 12,
+								backgroundColor: "rgb(15,23,42,0.8)",
+								padding: 8,
+								borderRadius: 20,
+							}}
+						>
+							<MaterialIcons
+								name={watched ? "check-circle" : "radio-button-unchecked"}
+								size={20}
+								color={watched ? "#22C55E" : "#94A3B8"}
 							/>
 						</TouchableOpacity>
 					</View>
