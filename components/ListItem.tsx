@@ -1,6 +1,7 @@
 import { Movie } from '@/Models/APIModels';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import React from 'react';
 
 type Props = {
     item: Movie;

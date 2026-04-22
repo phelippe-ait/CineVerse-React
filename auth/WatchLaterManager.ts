@@ -8,6 +8,15 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
 
+const requireUser = () => {
+  const user = auth.currentUser;
+  if (!user) throw new Error("User not logged in");
+  return user;
+};
+
+const userWatchLaterCollection = (userId: string) =>
+  collection(db, "users", userId, "watchLater");
+
 export const addToWatchLater = async (movie: {
   movieId: number;
   title: string;
@@ -15,20 +24,17 @@ export const addToWatchLater = async (movie: {
   overview?: string;
   releaseDate?: string;
 }) => {
-  const user = auth.currentUser;
-  if (!user) throw new Error("User not logged in");
+  const user = requireUser();
 
   const q = query(
-    collection(db, "watchLater"),
-    where("userId", "==", user.uid),
+    userWatchLaterCollection(user.uid),
     where("movieId", "==", movie.movieId)
   );
 
   const existing = await getDocs(q);
   if (!existing.empty) return;
 
-  await addDoc(collection(db, "watchLater"), {
-    userId: user.uid,
+  await addDoc(userWatchLaterCollection(user.uid), {
     movieId: movie.movieId,
     title: movie.title,
     posterPath: movie.posterPath || "",
@@ -38,12 +44,10 @@ export const addToWatchLater = async (movie: {
 };
 
 export const removeFromWatchLater = async (movieId: number) => {
-  const user = auth.currentUser;
-  if (!user) throw new Error("User not logged in");
+  const user = requireUser();
 
   const q = query(
-    collection(db, "watchLater"),
-    where("userId", "==", user.uid),
+    userWatchLaterCollection(user.uid),
     where("movieId", "==", movieId)
   );
 
@@ -57,12 +61,7 @@ export const getWatchLaterMovies = async () => {
   const user = auth.currentUser;
   if (!user) return [];
 
-  const q = query(
-    collection(db, "watchLater"),
-    where("userId", "==", user.uid)
-  );
-
-  const snapshot = await getDocs(q);
+  const snapshot = await getDocs(userWatchLaterCollection(user.uid));
 
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -74,10 +73,8 @@ export const isMovieInWatchLater = async (movieId: number) => {
   const user = auth.currentUser;
   if (!user) return false;
 
-  
   const q = query(
-    collection(db, "watchLater"),
-    where("userId", "==", user.uid),
+    userWatchLaterCollection(user.uid),
     where("movieId", "==", movieId)
   );
 

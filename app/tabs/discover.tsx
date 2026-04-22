@@ -190,7 +190,7 @@ export default function Discover() {
                     <Link
                         href={{
                             pathname: "/movie_details",
-                            params: { movieId: item.id.toString(), title: item.title, posterPath: item.posterPath ?? undefined, overview: item.overview, releaseDate: item.releaseDate },
+                            params: { movieId: item.id.toString(), title: item.title, posterPath: item.posterPath ?? undefined, overview: item.overview, releaseDate: item.releaseDate, voteAverage: item.voteAverage },
                         }}
                         asChild
                     >

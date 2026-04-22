@@ -14,7 +14,7 @@ import {
 export default function MovieDetails() {
 	const params = useLocalSearchParams<
 		"/movie_details",
-		{ movieId?: string; title?: string; posterPath?: string; overview?: string; releaseDate?: string }
+		{ movieId?: string; title?: string; posterPath?: string; overview?: string; releaseDate?: string; voteAverage?: string }
 	>();
 
 	const posterUrl = params.posterPath
@@ -104,6 +104,10 @@ export default function MovieDetails() {
 						<MaterialIcons name="movie" size={48} color="#1E293B" />
 					</View>
 				)}
+				<View style={styles.ratingRow}>
+					<Text style={styles.meta}>Rating: {Number(params.voteAverage).toFixed(1)}</Text>
+					<MaterialIcons name="star" size={16} color="#FACC15" style={styles.ratingStar} />
+				</View>
 				<Text style={styles.meta}>Release: {params.releaseDate}</Text>
 				<Text style={styles.overview}>{params.overview}</Text>
 			</ScrollView>
@@ -141,6 +145,13 @@ const styles = StyleSheet.create({
 	meta: {
 		color: "#ddd",
 		marginBottom: 6,
+	},
+	ratingRow: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	ratingStar: {
+		marginTop: -5,
 	},
 	overview: {
 		color: "#fff",

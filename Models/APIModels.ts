@@ -9,6 +9,7 @@ interface Response {
     overview: string;
     releaseDate: string;
     posterPath: string | null;
+    voteAverage: string;
 }
 
 export function mapJsonToMovie(json: any): Movie {
@@ -17,6 +18,7 @@ export function mapJsonToMovie(json: any): Movie {
         title: json.title ?? "Unknown Title",
         overview: json.overview ?? "No overview available.",
         releaseDate: json.release_date ?? "No release date available.",
-        posterPath: json.poster_path ?? null
+        posterPath: json.poster_path ?? null,
+        voteAverage: json.vote_average ?? "0.0",
     };
 }
