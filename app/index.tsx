@@ -104,7 +104,7 @@ export default function Login() {
       </View>
 
       <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Don't have an account?</Text>
+        <Text style={styles.signupText}>{"Don't have an account?"}</Text>
         <Link href="/signup" style={styles.signupButton} asChild>
           <Text>Sign up</Text>
         </Link>

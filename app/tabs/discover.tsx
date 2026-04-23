@@ -1,4 +1,4 @@
-import apiManager from "@/api/apiManager";
+import apiManager from "@/services/apiManager";
 import ListItem from "@/components/ListItem";
 import { Movie } from "@/Models/APIModels";
 import { Link } from "expo-router";

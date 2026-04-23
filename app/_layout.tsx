@@ -1,4 +1,3 @@
-import { HeaderTitle } from "@react-navigation/elements";
 import { Stack } from "expo-router";
 import React from "react";
 
@@ -33,7 +32,7 @@ export default function RootLayout() {
           headerTitleStyle: { fontWeight: "600", fontSize: 18 },
         }}
       />
-      // The "tabs" screen is the main authenticated area of the app, which contains the bottom tab navigator. It is defined in app/tabs/_layout.tsx.
+      {/* The tabs screen is the main authenticated area of the app. */}
       <Stack.Screen name="tabs" />
       <Stack.Screen
         name="movie_details"
